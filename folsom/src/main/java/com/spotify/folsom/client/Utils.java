@@ -18,6 +18,8 @@ package com.spotify.folsom.client;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import io.grpc.Context;
+
 import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
@@ -70,6 +72,9 @@ public final class Utils {
     if (executor == null) {
       return future;
     }
+
+    // ensure we propagate the current context in the reply executor.
+    executor = Context.current().fixedContextExecutor(executor);
     return future.whenCompleteAsync((t, throwable) -> {}, executor);
   }
 }
